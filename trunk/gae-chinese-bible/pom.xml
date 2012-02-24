@@ -1,12 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <!-- 
+        1. run "mvn gae:unpack", to download and unzip appengine-java-sdk
+        2. run "mvn gae:run", to run the local server
+     -->
+    
     <modelVersion>4.0.0</modelVersion>
     <groupId>gae-chinese-bible</groupId>
     <artifactId>gae-chinese-bible</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>gae-chinese-bible Maven Webapp</name>
-    <url>http://maven.apache.org</url>
+
+    <properties>
+        <!-- gae sdk 1.6.2.1 uses with maven-gae-plugin 0.9.2 -->
+        <gae.version>1.6.2.1</gae.version>
+        <maven.gae.plugin.version>0.9.2</maven.gae.plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -17,16 +29,72 @@
         <dependency>
             <groupId>net.kindleit</groupId>
             <artifactId>maven-gae-plugin</artifactId>
-            <version>0.9.2</version>
+            <version>${maven.gae.plugin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>1.6.2.1</version>
+            <version>${gae.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <type>pom</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <type>pom</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
-        <finalName>gae-chinese-bible</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.kindleit</groupId>
+                <artifactId>maven-gae-plugin</artifactId>
+                <version>${maven.gae.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.kindleit</groupId>
+                        <artifactId>gae-runtime</artifactId>
+                        <version>${gae.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo>Displaying value of settings.xml element</echo>
+                                <echo>[settings.localRepository] ${gae.home}</echo>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
 
